@@ -7,7 +7,7 @@
 - [Getting Started](#getting-started)
 - [Features](#features)
 - [Contributing](#contributing)
-- [AUTHORS](#AUTHORS)
+- [Aurhors](#aurhors)
 
 
 ## Introduction
@@ -27,7 +27,7 @@ Mustapha Ramadan : I will work alone in all stages of project completion
 In this project, I will use the PHP programming language and the Laravel framework, as well as JavaScript and html and CSS.
 I chose to use PHP and its Laravel software framework, because it is very easy and smooth to deal with, and also because I have already completed projects with it before.
 
-
+## Getting Started
 Clone the repository
    ```bash
    git clone https://github.com/MustaphaRam/Resume_cv.git
@@ -53,6 +53,7 @@ Visit http://localhost:8000 in your browser
 
 
 ## Features
+
 List the key features of your application. You've mentioned creating and downloading resumes in a professional way with multiple templates. Elaborate on this and any other unique features your project offers.
 
 - User-friendly resume creation wizard
@@ -62,10 +63,11 @@ List the key features of your application. You've mentioned creating and downloa
 
 
 ## Contributing
+
 Encourage others to contribute to your project. Provide guidelines for issues, feature requests, and pull requests.
 
 
-## AUTHOR
+## Aurhors
 
 This file contains the name of the main author of this project
 
