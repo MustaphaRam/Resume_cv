@@ -21,7 +21,9 @@ Mustapha Ramadan : I will work alone in all stages of project completion
 
 ## Technologies Used
 [Laravel 9.X](https://laravel.com/) - PHP framework.
+
 [Vue.js](https://vuejs.org/) - JavaScript framework for the frontend.
+
 [BootStrap 5.3](https://getbootstrap.com/) - css & js framework for the frontend.
 
 In this project, I will use the PHP programming language and the Laravel framework, as well as JavaScript and html and CSS.
