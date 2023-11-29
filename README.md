@@ -29,12 +29,13 @@ I chose to use PHP and its Laravel software framework, because it is very easy a
 
 ## Getting Started
 Clone the repository
-   ```bash
-   git clone https://github.com/MustaphaRam/Resume_cv.git
-   cd yourproject
-    ```
+```bash
+git clone https://github.com/MustaphaRam/Resume_cv.git
+cd yourproject
+```
 
 Install dependencies
+
 ```bash
 composer install
 npm install
