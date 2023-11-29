@@ -7,7 +7,7 @@
 - [Getting Started](#getting-started)
 - [Features](#features)
 - [Contributing](#contributing)
-- [License](#license)
+- [AUTHORS](#AUTHORS)
 
 
 ## Introduction
@@ -51,21 +51,23 @@ php artisan serve
 ```
 Visit http://localhost:8000 in your browser
 
-vbnet
 
 ## Features
 List the key features of your application. You've mentioned creating and downloading resumes in a professional way with multiple templates. Elaborate on this and any other unique features your project offers.
-
-```markdown
-## Features
 
 - User-friendly resume creation wizard
 - Multiple stylish templates
 - Download and share resumes online
 - ...
 
-Contributing
+
+## Contributing
 Encourage others to contribute to your project. Provide guidelines for issues, feature requests, and pull requests.
 
 
-Mustapha Ramadan <https://github.com/MustaphaRam><br/>
+## AUTHOR
+
+This file contains the name of the main author of this project
+
+## Mustapha Ramadan <https://github.com/MustaphaRam><br/>
+
