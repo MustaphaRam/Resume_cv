@@ -24,7 +24,10 @@ Mustapha Ramadan : I will work alone in all stages of project completion
 
 [Vue.js](https://vuejs.org/) - JavaScript framework for the frontend.
 
-[BootStrap 5.3](https://getbootstrap.com/) - css & js framework for the frontend.
+[BootStrap 5.3](https://getbootstrap.com/) - for Styling a CSS framework
+
+MySQL- Database
+
 
 In this project, I will use the PHP programming language and the Laravel framework, as well as JavaScript and html and CSS.
 I chose to use PHP and its Laravel software framework, because it is very easy and smooth to deal with, and also because I have already completed projects with it before.
