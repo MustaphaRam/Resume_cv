@@ -48,3 +48,75 @@
     color: rgb(22, 136, 254);
     cursor: pointer;
   }
+  .isBodP {
+    width: 16px;
+    height: 25px;
+  }
+
+  .kbFMmR {
+    color: rgb(113, 113, 166);
+    margin-right: 10px;
+    display: none;
+  }
+  .eNmQca {
+    width: auto;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    will-change: box-shadow;
+    background: transparent;
+    border: 0px;
+    margin: 0px;
+    color: rgb(40, 43, 50);
+    border-radius: 0px;
+    padding: 0px;
+  }
+  .bfNMLE {
+    position: relative;
+    display: flex;
+  }
+
+  .jEQib {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    -webkit-box-pack: start;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    flex-direction: row;
+  }
+  .eNmQca {
+    width: auto;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    will-change: box-shadow;
+    background: transparent;
+    border: 0px;
+    margin: 0px;
+    color: rgb(40, 43, 50);
+    border-radius: 0px;
+    padding: 0px;
+  }
+  .ikHWQs {
+    display: inline-block !important;
+  }
+  .kbFMmR {
+    color: rgb(113, 113, 166);
+    margin-right: 10px;
+    display: none;
+  }
+  .ignblp {
+    width: calc(100% - 15%);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    line-height: normal;
+    letter-spacing: normal;
+    color: rgb(113, 113, 166);
+  }
+  
+  .fnXcmN {
+    border-top: 1px solid rgb(230, 230, 255);
+    padding: 0px 10px;
+  }

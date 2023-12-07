@@ -14,11 +14,11 @@ class cv_controller extends Controller
         $this->middleware('auth');
     }
 
-    // index
+    // cv/create
     public function create(){
         return view('cv/form');
     }
-    // form create cv
+    /* // form create cv
     public function store(Request $request)
     {
         // Handle the form data
@@ -28,9 +28,10 @@ class cv_controller extends Controller
         // Return a response, e.g., success message
         
         return response()->json(['message' => $request->all()]);
-    }
+    } */
 
-    public function index() {
+    // cv/home
+    public function home() {
         if (Auth::check()) {
             return view('home/home', ['cvs'=>Auth::user()->user_cvs()->orderBy('created_at', 'DESC')->get()]);
         }
@@ -38,9 +39,11 @@ class cv_controller extends Controller
     }
     
 
-    //store cv
-    public function store_Cv(cv_request $request)
+    //store cv cv/store
+    public function store(Request $request)
     {
+        return response()->json(['message' => $request->all()]);
+        dd();
         //cv
         $cv = new Cv();
         $cv->title = $request->title;

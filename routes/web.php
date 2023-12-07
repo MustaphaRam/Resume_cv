@@ -19,16 +19,17 @@ Auth::routes();
 //Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::middleware(['middleware' => 'auth'])->group(function () {
-    Route::get('/home', [cv_controller::class, 'index'])->name('home');
+    Route::get('/', function () { return view('landingPage'); });
+    Route::get('/home', [cv_controller::class, 'home'])->name('home');
     Route::get('cv/create', [cv_controller::class, 'create'])->name('create');
     Route::post('cv/store', [cv_controller::class, 'store'])->name('store');
 });
 
 
 Route::middleware(['middleware' => 'guest'])->group(function () {
-    Route::get('/', function () {
-        return view('welcome');
-    });
+    /* Route::get('/', function () {
+        return view('landingPage');
+    }); */
 });
 
 

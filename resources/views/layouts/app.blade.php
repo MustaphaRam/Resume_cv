@@ -12,13 +12,17 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <link rel="stylesheet" type="text/css" src="{{ asset('style/landingPage.css') }}"></style>
+    <link rel="stylesheet" type="text/css" src="{{ asset('style/style1.css') }}"></style>
     <!-- Scripts -->
     @vite(['resources/sass/app.scss'])
 </head>
 <body>
     <div>        
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     Cv Resume
@@ -37,7 +41,13 @@
                             <a class="nav-link" href="{{ route('create') }}">Create</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="">About</a>
+                            <a class="nav-link" href="#templates">Templates</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#services">Services</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#about">About</a>
                         </li>
                     </ul>
 
@@ -57,7 +67,7 @@
                                 </li>
                             @endif
                         @else
-                            <li class="nav-item dropdown">
+                            <li class="nav-item dropdown" data-bs-theme="dark">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
                                 </a>
@@ -81,7 +91,7 @@
             </div>
         </nav>
 
-        <main class="py-4">
+        <main class="">
             @yield('content')
         </main>
     </div>
