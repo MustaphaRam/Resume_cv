@@ -16,7 +16,7 @@
                     <div class="jHmzai" @click="position(92)"><div class="dpzdms">FINISH</div><div></div></div> 
                 </div>
             </div>
-            <form @submit.prevent="submit">
+            <form @submit.prevent="submit" enctype="multipart/form-data" @input="dataToIframe">
                 <input id="title" type="hidden">
                 <div class="col-md-12 border-right content-left">
                     <div class="alert alert-success" v-show="success">Your CV it is Save</div>
@@ -25,7 +25,6 @@
                         <div v-show="pos == 8" id="8">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <h4 class="text-right"><b>Profile</b></h4>
-                                {{message}}
                             </div>
                             <h5>Please enter your profile informations</h5>
                             <span>This allows employers to know who you are.</span><br/>
@@ -33,13 +32,13 @@
                                 <div class="col-md-6">
                                     <div class="col-md-12 py-1">
                                         <label for="name">Name *</label>
-                                        <input v-model="fields.name" type="text" name="name" class="form-control" required>
-                                        <span v-if="errors && !fields.name" style="color: red;">This field is required.</span>
+                                        <input v-model="fields.name" type="text" name="name" class="form-control" >
+                                        <span v-if="errors && errors['fields.name']" style="color: red;">{{ errors['fields.name'][0] }}</span>
                                     </div>
                                     <div class="col-md-12 py-1">
                                         <label for="lastName">Last Name *</label>
-                                        <input v-model="fields.lastName" type="text" id="lastName" name="lastname" class="form-control" required>
-                                        <span v-if="!fields.lastName && !errors" style="color: red;">This field is required.</span>
+                                        <input v-model="fields.lastName" type="text" id="lastName" name="lastname" class="form-control" >
+                                        <span style="color: red;" v-if="errors && errors['fields.lastName']">{{ errors['fields.lastName'][0] }}</span>
                                     </div>
                                 </div>
                                 <div class="col-md-6">   
@@ -47,12 +46,12 @@
                                         <span for="image" class="border px-3 p-1 add-button">
                                             Chosse Image
                                             <!-- <input type="file" id="image" @change="handleImageChange" accept="image/*"> -->
-                                            <input @change="handleImageChange" type="file" name="image_profile" id="image" class="form-control form-control-sm" accept=".png, .jpg, .jpeg, .bmp" >
+                                            <input @change="handleFileChange" type="file" class="form-control form-control-sm" accept=".png, .jpg, .jpeg" >
                                         </span>
                                         <div v-if="fields.image_profile">
                                             <img  class="img-thumbnail" width="125" :src="imageUrl" alt="Image Principale" >
                                         </div>
-                                        <span class="alert alert-danger" v-show="errors && errors.image_profile">{{ errors.image_profile }}</span>
+                                        <span style="color: red;" v-if="errors && errors['fields.image_profile']">{{ errors['fields.image_profile'][0] }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -60,8 +59,8 @@
                             <div class="row">
                                 <div class="col-md-6 py-1">
                                     <label for="date_birth">Date Birth *</label>
-                                    <input v-model="fields.date_birth" type="date" id="date_birth" name="date_birth" min="{{ date('Y-m-d', strtotime('-60 years'))}}" max="{{ date('Y-m-d', strtotime('-15 years'))}}" class="form-control" required>
-                                        <span v-if="!fields.date_birth && errors" style="color: red;">This field is required.</span>
+                                    <input v-model="fields.date_birth" type="date" id="date_birth" name="date_birth" min="{{ date('Y-m-d', strtotime('-60 years'))}}" max="{{ date('Y-m-d', strtotime('-15 years'))}}" class="form-control" >
+                                    <span v-if="errors && errors['fields.date_birth']" style="color:red;">{{errors['fields.date_birth'][0]}}</span>
                                 </div>
                                 
                                 <div class="col-md-6 py-1">
@@ -70,25 +69,29 @@
                                         <div class="col-md-5">
                                         <!-- onchange="change(event)" -->
                                             <label for="M" class="form-check-label">
-                                                <input v-model="fields.gender" name="gender" type="radio" id="M" class="form-check-input" checked value="male"><label for="M"> Male</label>
+                                                <input v-model="fields.gender" name="fields.gender" type="radio" class="form-check-input" checked value="male">&emsp;<label for="M"> Male</label>
                                             </label>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="F" class="form-check-label">
-                                                <input v-model="fields.gender" name="gender" type="radio" id="F" class="form-check-input" value="female"><label for="M"> Female</label>
+                                                <input v-model="fields.gender" name="fields.gender" type="radio" id="F" class="form-check-input" value="female">&emsp;<label for="F"> Female</label>
                                             </label>
                                         </div>
                                     </div>
+                                    <span v-if="errors && errors['fields.gender']" style="color: red;">{{errors['fields.gender'][0]}}</span>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 py-1">
                                     <label for="country">Country *</label>
-                                    <select v-model="fields.country" class="form-select" id="country" name="country" aria-label="Default select example">
-                                        <option disabled value="">Please select country</option>
+                                    <select v-model="fields.country" class="form-select" id="country" aria-label="Default select example">
+                                        <option selected></option>
+                                        <option v-for="country in countries" :key="country" :value="country">
+                                            {{ country }}
+                                        </option>
                                     </select>
-                                    <span v-if="!fields.country && errors" style="color: red;">This field is required.</span>
+                                    <span v-if="errors && errors['fields.country']" style="color: red;">{{ errors['fields.country'][0] }}</span>
                                 </div>
                             </div>
                             
@@ -96,19 +99,19 @@
                                 <div class="col-md-6 py-1">
                                     <label for="hobbies">Hobbies </label>
                                     <input v-model="fields.hobbies" type="text" id="hobbies" name="hobbies" class="form-control" placeholder="for exmple: Sport, Cinema, Cooking, Music">
-                                    <span class="alert alert-danger" v-show="errors && errors.hobbies">{{ errors.hobbies }}</span>
+                                    <span  v-if="errors && errors['fields.hobbies']" style="color: red;">{{ errors['fields.hobbies'][0] }}</span>
                                 </div>
                                 <div class="col-md-6 py-1">
                                     <label for="hobbies">Title profile </label>
-                                    <input v-model="fields.title" type="text" id="title" name="title" class="form-control" placeholder="for exmple: Developer, Accountant" required>
-                                    <span class="alert alert-danger" v-show="errors && errors.title">{{ errors.title }}</span>
+                                    <input v-model="fields.title" type="text" id="title" name="title" class="form-control" placeholder="for exmple: Developer, Accountant" >
+                                    <span v-if="errors && errors['fields.title']" style="color: red;">{{ errors['fields.title'][0] }}</span>
                                 </div>
                             </div>
                             
                             <div class="form-group py-1">
                                 <label for="my_profile">Profile</label>
                                 <textarea v-model="fields.my_profile" type="text" id="my_profile" name="my_profile" class="form-control" placeholder="talk about your self" rows="2"></textarea>
-                                <span class="alert alert-danger" v-show="errors && errors.my_profile">{{ errors.my_profile }}</span>
+                                <span v-if="errors && errors['fields.my_profile']" style="color: red;">{{ errors['fields.my_profile'][0] }}</span>
                             </div>
                         </div> 
 
@@ -123,35 +126,35 @@
                                 <div class="col-md-6 py-2">
                                     <label class="labels">Address</label>
                                     <input v-model="fields.address" id="address" type="text" name="address" class="form-control contact" pattern="^[a-zA-Z0-9 -+°]{5,60}">
-                                    <span style="color:red;"></span>
+                                    <span style="color:red;" v-if="errors && errors['fields.address']">{{ errors['fields.address'][0] }}</span>
                                 </div>
-                                <div class="col-md-6 py-2">
+                                <div class="col-md-6 py-2">"
                                     <label class="labels">City</label>
                                     <input v-model="fields.city" type="text" id="Adcity" name="city" class="form-control contact" pattern="^[a-zA-Z ]{3,20}" minlength="3" maxlength="20">
-                                    <span style="color:red;"></span>
+                                    <span style="color:red;" v-if="errors && errors['fields.city']">{{ errors['fields.city'][0] }}</span>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 py-1">
                                     <label class="labels">Phone 1</label>
                                     <input v-model="fields.phone1" type="text" id="phone1" name="phone1" class="form-control contact" pattern="^[0-9 ()-,+]{10,13}$" minlength="10" maxlength="13">
-                                    <span style="color:red;"></span>
+                                    <span style="color:red;" v-if="errors && errors['fields.phone1']">{{ errors['fields.phone1'][0] }}</span>
                                 </div>
                                 <div class="col-md-6 py-1">
                                     <label class="labels">Phone 2</label>
                                     <input v-model="fields.phone2" type="text" id="phone2" name="phone2" class="form-control contact" pattern="^[0-9 ()-,+]{10,13}$" minlength="10" maxlength="13">
-                                    <span style="color:red;"></span>
+                                    <span style="color:red;" v-if="errors && errors['fields.phone2']">{{ errors['fields.phone2'][0] }}</span>
                                 </div>
                             </div>
                             <div class="col-md-12 py-1">
                                 <label class="labels">Email</label>
-                                <input v-model="fields.email" type="text" id="email" name="email" class="form-control contact" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" minlength="7" maxlength="40" required>
-                                <span style="color:red;"></span>
+                                <input v-model="fields.email" type="text" id="email" name="email" class="form-control contact" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" minlength="7" maxlength="40">
+                                <span style="color:red;" v-if="errors && errors['fields.email']">{{ errors['fields.email'][0] }}</span>
                             </div>
                             <div class="col-md-12 py-1">
                                 <label class="labels">Linkedin</label>
                                 <input v-model="fields.linkedin" type="text" id="linkedin" name="linkedin" class="form-control contact" maxlength="70" placeholder="www.linkedin.com/in/name-lastname">
-                                <span style="color:red;"></span>
+                                <span style="color:red;" v-if="errors && errors['fields.linkedin']">{{ errors['fields.linkedin'][0] }}</span>
                             </div>
                         </div> 
 
@@ -181,33 +184,33 @@
                                                 <div class="row py-2">
                                                     <div class="col-md-6 py-1">
                                                         <label class="labels">Certificate Name</label>
-                                                        <input v-model="certificate.name" name="certificate[]" class= "form-control" pattern="^[a-zA-Z0-9 -+]{3,30}$" required>
-                                                        <span style="color:red;"></span>
+                                                        <input v-model="certificate.name" class= "form-control" pattern="^[a-zA-Z0-9 -+]{3,30}$" >
+                                                        <span style="color:red;" v-if="errors && errors['certificates.' + k + '.name']">{{ errors['certificates.' + k + '.name'][0] }}</span>
                                                     </div>
                                                     <div class="col-md-6 py-1">
                                                         <label class="labels">Institution Name</label>
-                                                        <input v-model="certificate.institute_name" name="institute_name[]" class= "form-control inst_name" pattern="^[a-zA-Z0-9 -]{3,30}$" required>
-                                                        <span style="color:red;"></span>
+                                                        <input v-model="certificate.institute_name" class= "form-control inst_name" pattern="^[a-zA-Z0-9 -]{3,30}$" >
+                                                        <span style="color:red;" v-if="errors && errors['certificates.' + k + '.institute_name']">{{ errors['certificates.' + k + '.institute_name'][0] }}</span>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-6 py-1">
                                                         <label class="labels">Specialty</label>
-                                                        <input v-model="certificate.Specialty_name" name="Specialty_name[]" class = "form-control specialty" pattern="^[a-zA-Z0-9 -]{3,30}$" required>
-                                                        <span style="color:red;"></span>
+                                                        <input v-model="certificate.Specialty_name" class = "form-control specialty" pattern="^[a-zA-Z0-9 -]{3,30}$" >
+                                                        <span style="color:red;" v-if="errors && errors['certificates.' + k + '.Specialty_name']">{{ errors['certificates.' + k + '.Specialty_name'][0] }}</span>
                                                     </div>
                                                     <div class="col-md-6 py-1">
                                                         <label class="labels">Date Obtaining</label>
-                                                        <select v-model="certificate.date_obtaining" name="date_obtaining[]" class= "form-control" required>
+                                                        <select v-model="certificate.date_obtaining" class= "form-control" >
                                                             <option v-for="year in availableYears" :key="year" :value="year">{{ year }}</option>
                                                         </select>
-                                                        <span style="color:red;"></span>
+                                                        <span style="color:red;" v-if="errors && errors['certificates.' + k + '.date_obtaining']">{{ errors['certificates.' + k + '.date_obtaining'][0] }}</span>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12 py-1">
                                                     <label class="labels">Description</label>
-                                                    <textarea v-model="certificate.description" name="description[]"  maxlength="130" class ="form-control other_info"></textarea>
-                                                    <span style="color:red;"></span>
+                                                    <textarea v-model="certificate.description"  maxlength="130" class ="form-control other_info"></textarea>
+                                                    <span style="color:red;" v-if="errors && errors['certificate.' + k + '.description']">{{ errors['certificate.' + k + '.description'][0] }}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -253,39 +256,39 @@
                                                     <div class="col-md-6 py-1" >
                                                         <label class="labels">Job post</label>
                                                         <input v-model="experience.name_post" name="post[]" class="form-control">
-                                                        <span style="color:red;"></span>
+                                                        <span style="color:red;" v-if="errors && errors['experiences.' + e + '.name_post']">{{ errors['certificates.' + e + '.name_post'][0] }}</span>
                                                     </div>
                                                     <div class="col-md-6 py-1">
                                                         <label class="labels">Company name or Institution Name</label>
                                                         <input v-model="experience.name_company" name="institution[]" class="form-control">
-                                                        <span style="color:red;"></span>
+                                                        <span style="color:red;" v-if="errors && errors['experiences.' + e + '.name_company']">{{ errors['certificates.' + e + '.name_company'][0] }}</span>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-4 py-1">
                                                         <label class="labels">Start date </label>
                                                         <input v-model="experience.start_date" type="month" min="1970-01" name="startdate[]" class = "form-control">
-                                                        <span style="color:red;"></span>
+                                                        <span style="color:red;" v-if="errors && errors['experiences.' + e + '.name_company']">{{ errors['certificates.' + e + '.name_company'][0] }}</span>
                                                     </div>
-                                                    <div class="col-md-4 py-1">
+                                                    <div class="col-md-4 py-1" v-if="!experience.currently_here">
                                                         <label class="labels">End date</label>
                                                         <input v-model="experience.end_date" type="month" min="1970-01" name="enddate[]" class = "form-control">
-                                                        <span style="color:red;"></span>
+                                                        <span style="color:red;" v-if="errors && errors['experiences.' + e + '.name_company']">{{ errors['certificates.' + e + '.name_company'][0] }}</span>
                                                     </div>
                                                     <div class="col-md-4 py-1">
                                                         <label class="labels">City</label>
                                                         <input v-model="experience.city" name="city_exp[]" class = "form-control" >
-                                                        <span style="color:red;"></span>
+                                                        <span style="color:red;" v-if="errors && errors['experiences.' + e + '.city']">{{ errors['certificates.' + e + '.city'][0] }}</span>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12 py-1">
-                                                    <input v-model="experience.currently_here" type="checkbox" name="currently_here[]">
-                                                    <label class="labels" for="currently_here[]"> I currently work here</label>
+                                                    <input v-model="experience.currently_here" @change="changecurrently_here(e)" type="checkbox" name="currently_here[]" value="0">
+                                                    <label class="labels" for="currently_here[]">&emsp;I currently work here</label>
                                                 </div>
                                                 <div class="col-md-12 py-1">
                                                     <label class="labels">Description</label>
-                                                    <textarea v-model="experience.description" name="otherinfo[]" maxlength="120" class = "form-control"></textarea>
-                                                    <span style="color:red;"></span>
+                                                    <textarea v-model="experience.description" name="description[]" maxlength="400" class = "form-control"></textarea>
+                                                    <span style="color:red;" v-if="errors && errors['experiences.' + e + '.description']">{{ errors['certificates.' + e + '.description'][0] }}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -330,8 +333,8 @@
                                                 <div class="row py-2">
                                                     <div class="col-md-6 py-1">
                                                         <label class="labels">Skill</label>
-                                                        <input v-model="skill.name" name="skill[]" class="form-control" >
-                                                        <span style="color:red;"></span>
+                                                        <input v-model="skill.name" class="form-control" >
+                                                        <span style="color:red;" v-if="errors && errors['skills.' + e + '.name']">{{ errors['certificates.' + s + '.name'][0] }}</span>
                                                     </div>
                                                     <div class="col-md-6 py-1">
                                                         <label for="level" class="col-md-12">Level</label>
@@ -340,7 +343,7 @@
                                                             <input v-model="skill.levelIndex" @change="updateSkillLevel(s)" type="range" style="width:57%;padding-left: 20px;" size="1" class="form-range" min="0" max="4" step="1">
                                                             <span class="col-md-5" id="show-sk-lev">{{ skill.level }}</span>
                                                         </div>
-                                                        <span style="color:red;"></span>
+                                                        <span style="color:red;" v-if="errors && errors['skills.' + e + '.level']">{{ errors['certificates.' + s + '.level'][0] }}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -387,7 +390,7 @@
                                                     <div class="col-md-6 py-1">
                                                         <label class="labels">Langue</label>
                                                         <input v-model="language.name" name="language[]" class="form-control" >
-                                                        <span style="color:red;"></span>
+                                                        <span style="color:red;" v-if="errors && errors['languages.' + l + '.name']">{{ errors['languages.' + s + '.name'][0] }}</span>
                                                     </div>
                                                     <div class="col-md-6 py-1"><label for="level" class="col-md-12">Level</label>
                                                         <div class="row py-1 flex-nowrap">
@@ -395,7 +398,7 @@
                                                             <input v-model="language.levelIndex" @input="updateLanguageLevel(l)" type="range" style="width:57%;padding-left: 20px;"  size="1" class="form-range" min="0" max="4" step="1">
                                                             <span class="col-md-5" id="">{{ language.level }}</span>
                                                         </div> 
-                                                        <span style="color:red;"></span>
+                                                        <span style="color:red;" v-if="errors && errors['languages.' + e + '.level']">{{ errors['languages.' + s + '.name'][0] }}</span>
                                                     </div>  
                                                 </div>
                                             </div>
@@ -420,6 +423,7 @@
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <h4 class="text-right"><b>Finish</b></h4>
                             </div>
+                            <span style="color: red" v-for="(error, er) in errors" :key="er"> {{ error[0] }}</span>
                         </div>
                     </div>
                 </div>
@@ -450,24 +454,24 @@
                 <div class=" bg-light" style="height: 50px;">
                     <div class="d-flex justify-content-start" style="padding: 5px; ">
                         <div class="p-2 bd-highlight col-md-3">
-                            <select class="form-select form-select-sm" aria-label="form-select-sm example" id="templet" value="">
-                                <option selected value="cv_templet2">Model 1 </option>
-                                <option value="cv_templet1">Model 2</option>
+                            <select v-model="template.temp" @change="design_template" class="form-select form-select-sm" aria-label="form-select-sm example" id="templet">
+                                <option selected value="t1">Model 1 </option>
+                                <option value="t2">Model 2</option>
                             </select>
                         </div>
                         <div class="p-1 bd-highlight" style="display: inline-flex;" >
                             <!-- <label for="ColorInput" class="form-label">Color picker </label> -->
-                            <input type="color" class="form-control form-control-color" id="color" value="#3A5B87" title="Choose your color">                           
+                            <input @input="design_template" v-model="template.color" type="color" class="form-control form-control-color"  id="color"  title="Choose your color">                           
                         </div>
                         <div class="p-2 bd-highlight col-md-3">
-                            <select class="form-select form-select-sm" aria-label="form-select-sm example" id="font_fami">
+                            <select @change="design_template" v-model="template.font_fami" class="form-select form-select-sm" aria-label="form-select-sm example" id="font_fami">
                                 <option selected value="Arial">Arial </option>
                                 <option value="">#</option>
                                 <option value="">#</option>
                             </select>
                         </div>
                         <div class="p-2 bd-highlight col-md-3">
-                            <select class="form-select form-select-sm" aria-label="form-select-sm example" id="size_font">
+                            <select @change="design_template" v-model="template.size_font" class="form-select form-select-sm" aria-label="form-select-sm example" id="size_font">
                                 <!-- <option value="">Size Font</option> -->
                                 <option value="XS">XS</option>
                                 <option value="S">S</option>
@@ -479,9 +483,9 @@
                     </div>
                 </div>                
                 <div class="position-absolute top-50 start-50 translate-middle bg-body" style="width: 480.8px; height: 678.3px; padding: 0; vertical-align: middle; z-index: 3; background-color: white !important;margin-top: 22px">
-                    <!-- <iframe class="" title="Templet" id="cv_templet" src="" seamless="seamless" scrolling="no" style="max-width: 479.8px; height: 100%;width: 100%;">
+                    <iframe refs="myIframe" class="" title="Templet" id="cv_templet" :src="'/template/'+template.temp" seamless="seamless" scrolling="no" style="max-width: 479.8px; height: 100%;width: 100%;">
                         
-                    </iframe> -->
+                    </iframe>
                 </div>
             </div>
         </div>
@@ -492,17 +496,30 @@
 
 <script>
     import axios from 'axios';
-
-     export default {
+    
+    export default {
         components: {
             //Vue3SlideUpDown,
         },
         data () {
             return {
+                template: {
+                    temp: 't1',
+                    color: '#3a5b87',
+                    font_fami: 'Arial',
+                    size_font: 'M',
+                },
+                countries: [],
                 pos: 8,
                 progress: 8,
                 message: null,
-                fields: {},
+                fields: {
+                    image_profile: "",
+                    gender: 'male',
+                    country: null,
+                    my_profile: "",
+                    hobbies: "",
+                },
                 success: false,
                 errors: {},
                 selectedImage: null,
@@ -595,7 +612,6 @@
                 if(this.experiences.length == 1)
                     this.experiences[0].show = true;
             },
-
             toggle_exp (index) {
                 this.disable_all_exp(index);
                 this.experiences[index].show = !this.experiences[index].show;
@@ -612,7 +628,10 @@
                     }
                 }
             },
-
+            changecurrently_here(index){
+                this.experiences[index].end_date = '';
+                console.log('currently_here value:', Boolean(this.experiences[index].currently_here));
+            },
             /********* skills ************ */
             add_skill() {
                 this.disable_all_skills();
@@ -688,33 +707,78 @@
             },
                         
             /*************************** */
-            handleImageChange(event) {
-                const file = event.target.files[0];
-                // You can do something with the selected file, for example, store it in the component's data
-                this.fields.image_profile = file;
+            handleFileChange(event) {
+                this.fields.image_profile = event.target.files[0] || null;
             },
             submit() {
                 this.errors = false;
-                const formData = {
-                    fields: this.fields,
-                    certificates: this.certificates,
-                    experiences: this.experiences,
-                };
+                
+                // Create FormData
+                const formData = new FormData();
+                
+                // Append fields data
+                for (let key in this.fields) {
+                    formData.append(`fields[${key}]`, this.fields[key]);
+                }
+                
+                // Append certificates data
+                this.certificates.forEach((certificate, index) => {
+                    for (let key in certificate) {
+                        formData.append(`certificates[${index}][${key}]`, certificate[key]);
+                    }
+                });
 
-                // Make an HTTP POST request to your Laravel controller
-                axios.post('store', formData)
-                    .then(response => {
-                        // Handle success
-                        console.log(response.data);
-                    })
-                    .catch(error => {
-                        // Handle error
-                        console.error('There was an error!', error);
+                // Append experiences data
+                this.experiences.forEach((experience, index) => {
+                    for (let key in experience) {
+                        formData.append(`experiences[${index}][${key}]`, experience[key]);
+                    }
+                });
+
+                // Append experiences data
+                this.skills.forEach((skill, index) => {
+                    for (let key in skill) {
+                        formData.append(`skills[${index}][${key}]`, skill[key]);
+                    }
+                });
+
+                // Append experiences data
+                this.languages.forEach((language, index) => {
+                    for (let key in language) {
+                        formData.append(`languages[${index}][${key}]`, language[key]);
+                    }
+                });
+
+                for (let key in this.template) {
+                    formData.append(`template[${key}]`, this.template[key]);
+                }
+
+                console.log(this.fields);
+                axios.post('store', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                })
+                .then(response => {
+                    // Handle success
+                    console.log(response.data);
+                })
+                .catch(error => {
+                    if (error.response.status === 422) {
+                        // Validation error
+                        this.errors = error.response.data.errors;
+                        console.table(this.errors);
+                        //console.log(this.errors.Object.fields.date_birth[0]);
+                    } else {
+                        // Other error (server error, etc.)
+                        console.error(error);
+                    }
                 });
             },
             next(p) {
                 this.pos = (this.pos + p);
                 this.progress = this.pos;
+                this.datatosvg;
             },
             back(p) {
                 this.pos = (this.pos-p);
@@ -724,6 +788,120 @@
                 this.pos = p;
                 this.progress = p;
             },
+
+            dataToIframe(){
+                //var cv = this.fields;
+                try{
+                    const iframe = document.getElementById("cv_templet").contentDocument;
+                    //image
+                    if(this.fields.image_profile){
+                        var imagPro = iframe.getElementById("imagPro");  
+                        imagPro.src = this.imageUrl;
+                        console.log(this.imageUrl);
+                    }
+                    if(this.fields.image_profile){iframe.getElementById("cader-imag").hidden=false;}
+                    //img_svg.prop('hidden', false);
+                    iframe.getElementById("tit").textContent = this.fields.title;
+                    iframe.getElementById("fullName").textContent = this.fields.name + this.fields.lastName;
+                    iframe.getElementById("email").textContent = this.fields.email;
+                    var ph2="";if(this.fields.phone2) ph2=' / '+this.fields.phone2;
+                    iframe.getElementById("tel").textContent = this.fields.phone1+ ph2;
+                    iframe.getElementById("address").textContent = this.fields.address;
+                    iframe.getElementById("linkedin").textContent = this.fields.linkedin;
+                    iframe.getElementById("Profile").textContent = this.fields.my_profile;
+                    
+                    var secEdu = iframe.getElementById('secEdu'),count=0;
+                    $.each(this.certificates, function(key, value){
+                        if(count==0)$('#cv_templet').contents().find('#secEdu').html("");;
+                        var sedu = `<div class="item"><div class="meta"><div class="upper-row"><h2 class="job-title">`+this.name+` `+this.Specialty_name+`</h2></div><div class="upper-row"><div class="compa">`+this.institute_name+`</div><div class="date">`+this.date_obtaining+`</div></div></div><div class="text-wrap"><p>`+this.description+`</p></div></div>`;
+                        $('#cv_templet').contents().find('#secEdu').append(sedu);
+                        count++;
+                    });
+
+                    count=0;
+                    //experience
+                    $.each(this.experiences, function(key, value){
+                        if(count==0)$('#cv_templet').contents().find('#secExp').html("");
+                        var sedu = `<div class="item"><div class="meta"><div class="upper-row"><h2 class="job-title">`+this.name_post+`</h2></div><div class="upper-row"><div class="compa">`+this.name_company+`, `+this.city+`</div><div class="date">`+this.start_date+` - `+this.end_date+`</div></div></div><div class="text-wrap"><p>`+this.description+`</p></div></div>`;
+                        $('#cv_templet').contents().find('#secExp').append(sedu);
+                        count++;
+                    });
+
+                    var leval = this.level;
+                    count=0;
+                    var cercles ="";
+                    //lang
+                    $.each(this.languages, function(key, value){
+                        if(count==0)$('#cv_templet').contents().find('#seclang').html("");
+                        if(this.name){
+                            for (let index = 0; index < leval.length; index++) {
+                                if(index<=leval.indexOf(this.level))
+                                    //cercles +='<span class="c55 icon-holder" style="padding: 0 3px;"><icon class="fa-solid fa-circle"></icone></span>';
+                                    cercles +='<div class="setcolor" style="padding: 0 3px; height: 15px; width: 15px; border-radius: 50%;"></div>';
+                                else
+                                    cercles +='<div class="" style="padding: 0 3px; background-color: #bbbbbb; height: 15px; width: 15px; border-radius: 50%;"></div>';
+                            }
+                            var sedu = `<div class="lan_lev"><div class="col-xs-6"><span class="lang">`+this.name+`</span></div> <div class="col-xs-4" style="display: -webkit-inline-box;">`+cercles+`</div></div>`;
+                            $('#cv_templet').contents().find('#seclang').append(sedu);
+                            count++;
+                            cercles="";
+                        }
+                    });
+
+                    //Skills
+                    count = 0;
+                    $.each(this.skills, function(key, value){
+                        if(count==0)$('#cv_templet').contents().find('#skillset').html("");
+                        if(this.name){
+                            cercles= (leval.indexOf(this.level)+1)*20;
+                            var sedu = `<div class="container">
+                            <div class="row justify-content-around">
+                                <div class="col-6"><h6 class="level-title">`+this.name+`</h6></div>
+                                <div class="col-4">
+                                    <div class="progress" style="height: 15px; width: 190px; margin-top: 3px;">
+                                        <div class="progress-bar setcolor" role="progressbar" style="width: `+cercles+`%;" aria-valuenow="`+cercles+`" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>`;
+                            $('#cv_templet').contents().find('#skillset').append(sedu);
+                            count++;
+                        }
+                    });
+
+                    count = 0;
+                    //hobbies
+                    if(this.fields.hobbies) {
+                        let hobbies = this.fields.hobbies.split(',');
+                        $.each(hobbies, function(key, value){
+                            if(hobbies[0]==this)
+                                $('#cv_templet').contents().find('#hobbies').html("");
+
+                            $('#cv_templet').contents().find('#hobbies').append('<li>'+this+'</li>');
+                        });
+                    }
+                    design_template;
+                }
+                catch(err)
+                {
+                    console.log(err)
+                }
+            },
+            design_template()
+            {
+                //design
+                const iframe = document.getElementById("cv_templet").contentDocument;
+                //chage font color cv
+                var pa= iframe.getElementsByTagName("page");
+                $.each(pa, function(key, value){
+                    this.style.font = this.template.font;
+                });
+                $.each(iframe.getElementsByClassName("setcolor"), function(key, value){
+                    this.style.background = $("#color").val();
+                });
+                $.each(iframe.getElementsByClassName("c55"), function(key, value){
+                    this.style.color = $("#color").val();
+                });
+            }
         },
         computed: {
             imageUrl() {
@@ -738,7 +916,15 @@
                 }
                 return years;
             },
-        }
+        },
+        async created() {
+            try {
+                const response = await axios.get('/countries');
+                this.countries = response.data;
+            } catch (error) {
+                console.error('Error fetching countries:', error);
+            }
+        },
     }
 </script>
 

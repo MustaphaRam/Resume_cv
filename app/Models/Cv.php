@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Ramsey\Uuid\Uuid;
 
 class Cv extends Model
 {
@@ -20,16 +22,34 @@ class Cv extends Model
      * @var string
      */
     protected $table = 'cvs';
-    protected $fillable = ['title','user_id'];
-    protected $hidden = ['updated_at'];
+    protected $fillable = ['id','title'];
+    protected $hidden = ['updated_at','user_id'];
     protected $dates = ['deleted_At'];
 
+    public function __construct() 
+    {
+        $this->attributes['id'] = Uuid::uuid4();
+        $this->attributes['user_id'] = Auth::user()->id;
+    }
+
+    public function getUser(){
+        return $this->attributes['user_id'];
+    }
+
+    public function setTitle($value){
+        $this->attributes['title'] = $value;
+    }
+
+    public function getTitle(){
+        return $this->attributes['title'];
+    }
+
     /**
-     * RelationShips on database
+     * RelationShips ORM
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function relactions_cv(){

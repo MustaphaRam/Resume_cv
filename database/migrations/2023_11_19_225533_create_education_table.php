@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::create('education', function (Blueprint $table) {
             $table->id();
-            $table->string('certificate');
-            $table->string('institute_name');
-            $table->string('Specialty_name');
-            $table->date('date_obtaining');
-            $table->text('description');
+            $table->string('certificate')->nullable();
+            $table->string('institute_name')->nullable();
+            $table->string('Specialty_name')->nullable();
+            $table->date('date_obtaining')->nullable();
+            $table->text('description')->nullable();
             $table->uuid('cv_id');
             $table->foreign('cv_id')->references('id')->on('cvs')->onDelete('cascade');
             $table->timestamps();

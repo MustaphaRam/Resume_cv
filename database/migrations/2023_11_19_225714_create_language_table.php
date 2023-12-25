@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('languages', function (Blueprint $table) {
             $table->id();
-            $table->string('language_name');
-            $table->string('level');
+            $table->string('language_name')->nullable();
+            $table->string('level')->nullable();
             $table->uuid('cv_id');
             $table->foreign('cv_id')->references('id')->on('cvs')->onDelete('cascade');
             $table->timestamps();

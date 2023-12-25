@@ -54,4 +54,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(Cv::class, 'user_id')->latest();
     }
+
+    public function get_cv($id)
+    {
+        $cv = $this->hasOne(Cv::class, 'user_id')::where('id', $id)->latest();
+        /* $cv = CV::where('id', $id)
+            ->where('user_id', Auth::user()->id)
+            ->first(); */
+        return $cv;
+    }
+
 }

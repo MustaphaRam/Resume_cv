@@ -19,11 +19,11 @@ return new class extends Migration
             $table->string('name', 50);
             $table->string('lastname', 50);
             $table->date('date_birth',10);
-            $table->string('gender',10);
-            $table->string('image_profile',150);
-            $table->string('country',20);
-            $table->text('my_profile', 400);
-            $table->string('hobbies', 150);
+            $table->string('gender',6);
+            $table->string('image_profile',150)->nullable();
+            $table->string('country',50)->nullable();
+            $table->text('my_profile', 400)->nullable();
+            $table->string('hobbies', 150)->nullable();
             $table->uuid('cv_id');
             $table->foreign('cv_id')->references('id')->on('cvs')->onDelete('cascade');
             $table->timestamps();

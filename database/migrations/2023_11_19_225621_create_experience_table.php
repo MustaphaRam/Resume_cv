@@ -15,12 +15,13 @@ return new class extends Migration
     {
         Schema::create('experiences', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name_post');
-            $table->string('name_company');
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->string('city');
-            $table->text('description');
+            $table->string('name_post')->nullable();
+            $table->string('name_company')->nullable();
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->string('city')->nullable();
+            $table->bool('currently_here')->default(false)->nullable();
+            $table->text('description')->nullable();
             $table->uuid('cv_id');
             $table->foreign('cv_id')->references('id')->on('cvs')->onDelete('cascade');
             $table->timestamps();

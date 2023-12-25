@@ -11,8 +11,8 @@
                 <h1 class="font-weight-light h1">Craft The Perfect CV Resume</h1>
                 <hr class="border border-primary border-3 opacity-75 w-50">
                 <p class="h6 mb-3">This is a template that is great for small businesses. It doesn't have too much fancy flare to it, but it makes a great use of the standard Bootstrap core components. Feel free to use this template for any project you want!</p>
-                <a class="btn btn-primary me-2 rounded-0 p-2" href="#!">CREATE CV</a>
-                <a class="btn btn-outline-primary rounded-0 p-2" href="#!">SING UP</a>
+                <a class="btn btn-primary me-2 rounded-0 p-2" href="{{ route('create') }}">CREATE CV</a>
+                <a class="btn btn-outline-primary rounded-0 p-2" href="{{ url('register')}}">SING UP</a>
             </div>
         </div>
     </div>

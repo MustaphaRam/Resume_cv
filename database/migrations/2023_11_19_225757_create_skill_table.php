@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('skills', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 50);
-            $table->string('level');
+            $table->string('name', 50)->nullable();
+            $table->string('level')->nullable();
             $table->uuid('cv_id');
             $table->foreign('cv_id')->references('id')->on('cvs')->onDelete('cascade');
             $table->timestamps();

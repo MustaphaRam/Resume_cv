@@ -9,9 +9,15 @@ class Contact extends Model
 {
     use HasFactory;
 
-    protected $table = 'contacts';
-    protected $fillable = ['city','address','code_postal','phone1','phone2','email','linkedin','cv_id'];
+    protected $table = 'contact';
+    protected $fillable = ['city','address','phone1','phone2','email','linkedin','cv_id'];
     protected $hidden = ['created_at','updated_at'];
+
+    public function __construct()
+    {
+        $this->attributes['phone2'] = "";
+        $this->attributes['linkedin'] = "";
+    }
 
     public function cv()
     {
