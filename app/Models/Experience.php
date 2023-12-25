@@ -22,11 +22,11 @@ class Experience extends Model
 
     public function getStart_date()
     {
-        //return $this->attributes['start_date'];
-        // convert string to date
+        return $this->attributes['start_date'];
+        /* // convert string to date
         $date = DateTime::createFromFormat('m-Y', $this->attributes['start_date']);
         $date= \Carbon\Carbon::parse($date)->format('m-Y');
-        return $date;
+        return $date; */
     }
 
     public function setEnd_date($value)
@@ -36,10 +36,10 @@ class Experience extends Model
 
     public function getEnd_date()
     {
-        //return $this->attributes['end_date'];
-        $date = DateTime::createFromFormat('m-Y', $this->attributes['end_date']);
+        return $this->attributes['end_date'];
+        /* $date = DateTime::createFromFormat('m-Y', $this->attributes['end_date']);
         $date = \Carbon\Carbon::parse($date)->format('m-Y');
-        return $date;
+        return $date; */
     }
 
     public function setCurrently_here($value)
