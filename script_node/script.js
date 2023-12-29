@@ -10,7 +10,7 @@ const fs = require('fs');
     // Read HTML content from the file
     const html = fs.readFileSync(pathfile, 'utf-8');
 
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({ headless: "new" });
     const page = await browser.newPage();
 
     // Set HTML content and wait for rendering
@@ -23,7 +23,7 @@ const fs = require('fs');
 
     const fs1 = require('fs');
     fs1.writeFileSync(`../Document/${id}.pdf`, PDF);
-    console.log('PDF file generated successfully.');
+    /* console.log(PDF); */
   } catch (error) {
     console.error('Error generating PDF:', error);
   }

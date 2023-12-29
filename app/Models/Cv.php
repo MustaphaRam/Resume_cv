@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Ramsey\Uuid\Uuid;
 
+
 class Cv extends Model
 {
     use HasFactory;
@@ -23,13 +24,18 @@ class Cv extends Model
      */
     protected $table = 'cvs';
     protected $fillable = ['id','title'];
-    protected $hidden = ['updated_at','user_id'];
+    protected $hidden = ['updated_at','user_id','deleted_At'];
     protected $dates = ['deleted_At'];
 
     public function __construct() 
     {
         $this->attributes['id'] = Uuid::uuid4();
         $this->attributes['user_id'] = Auth::user()->id;
+        $this->attributes['title'] = '';
+    }
+
+    public function getId(){
+        return $this->attributes['id'];
     }
 
     public function getUser(){
@@ -53,17 +59,17 @@ class Cv extends Model
     }
 
     public function relactions_cv(){
-        return $this->belongsToMany(Profile::class, Contact::class, Education::class, Experience::class, Language::class, Skill::class, Templet::class, "cv_id");
-    }
-
-    public function cv()
-    {
-        return $this->hasOne(User::class, 'user_id');
-    }
-
-    public function rel_cv()
-    {
-        return $this->hasMany(Education::class, "cv_id");
+        return $cv = [
+            'id' => $this->getId(),
+            'title' => $this->title,
+            'profile' => $this->profile,
+            'contact' => $this->contact,
+            'certificate' => $this->education,
+            'experience' =>$this->experience,
+            'skill' =>$this->skill,
+            'language' =>$this->language,
+            'template' =>$this->templet,
+        ];
     }
 
     public function profile()
@@ -98,6 +104,16 @@ class Cv extends Model
 
     public function templet()
     {
-        return $this->hasOne(Templet::class, "cv_id");
+        return $this->hasOne(Templet::class);
     }
+
+    /* /**
+     * Get the user that owns the Cv
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    /*public function templet(): BelongsTo
+    {
+        return $this->belongsTo(templet::class, 'cv_id');
+    } */
 }

@@ -17,7 +17,7 @@ class Experience extends Model
     
     public function setStart_date($value)
     {
-        $this->attributes['start_date'] = \Carbon\Carbon::parse($value)->format('m-Y');
+        $this->attributes['start_date'] = \Carbon\Carbon::parse($value)->format('Y-m');
     }
 
     public function getStart_date()
@@ -31,7 +31,7 @@ class Experience extends Model
 
     public function setEnd_date($value)
     {
-        $this->attributes['end_date'] = \Carbon\Carbon::parse($value)->format('m-Y');
+        $this->attributes['end_date'] = \Carbon\Carbon::parse($value)->format('Y-m');
     }
 
     public function getEnd_date()

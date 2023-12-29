@@ -20,7 +20,7 @@
     <!-- Scripts -->
     @vite(['resources/sass/app.scss'])
 </head>
-<body>
+<body style="background-color: #f6f4f4;">
     <div>        
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
@@ -41,7 +41,7 @@
                         </li>
                         @auth
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('create') }}">Create</a>
+                                <a class="nav-link" href="{{ route('cv.create') }}">Create</a>
                             </li>
                         @endauth
                         <li class="nav-item">

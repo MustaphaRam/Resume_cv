@@ -45,7 +45,7 @@
     .sidebar-wrapper {
         background: #e6e6e6;
         /* height: 1123px; */
-        color: #7b07a8;
+        /* color: #7b07a8; */
         padding-bottom: 8px;
         background-clip: content-box;
         padding: 0;
@@ -289,8 +289,8 @@
 </head>
 <body>
 <div id="app">
-    <div class="row w-100" style="/* display: -webkit-box;width: 100%; */">
-        <div class="sidebar-wrapper col-xs-4 col-4">
+    <div class="row w-100">
+        <div class="sidebar-wrapper col-xs-4 col-4" style="min-height: 100vh;">
             <div class="setcolor profile-container" style="">
                 <h1 id="fullName" class="font size name">{{ $cv->profile['name']." ".$cv->profile['lastname']}}</h1>
                 <h3 id="tit" class="tagline">{{ $cv->title }}</h3>
@@ -298,7 +298,7 @@
                         <div id="cader-imag" class="profile-image">
                             @php
                                 if ($cv->profile->image_profile){
-                                    $imagePath = base_path('upload/images/'.$cv->profile->image_profile);  // Replace this with the path to your image
+                                    $imagePath = public_path('upload/images/'.$cv->profile->image_profile);  // Replace this with the path to your image
                                     $base64Image = base64_encode(file_get_contents($imagePath));
                                 }
                                 else 
@@ -343,7 +343,7 @@
             </div>
             @if(count($cv->language)>0)
             <div class="languages-container container-block">
-                <h2 class="c55 container-block-title" style="color: rgb(58, 91, 135);">Languages</h2>
+                <h2 class="c55 container-block-title">Languages</h2>
                 <div id="seclang" class="lan_lev" style="display: grid;">
                 @foreach($cv->language as $lang)
                     <div class="lan_lev row justify-content-between align-items-center" style="/* align-items: center;display: -webkit-inline-box; */">
@@ -367,7 +367,7 @@
                 $hobbies = explode(',', $cv->profile->hobbies);
             @endphp
             <div class="interests-container container-block">
-                <h2 class="c55 container-block-title" style="color: rgb(58, 91, 135);">Hobbies</h2>
+                <h2 class="c55 container-block-title">Interests</h2>
                 <ul id="hobbies" class="list-unstyled interests-list">
                     @foreach($hobbies as $hobby)
                         <li>{{ $hobby }}</li>
@@ -377,9 +377,9 @@
             @endif
         </div><!--//sidebar-wrapper-->
         
-        <div class="main-wrapper col-xs-8 col-8" style="">
+        <div class="main-wrapper col-xs-8 col-8">
             <section style="white-space: normal;" class="section">
-                <h2 class="c55 section-title mb-3" style="color: rgb(58, 91, 135);">
+                <h2 class="c55 section-title mb-3">
                     <span class="setcolor icon-holder" style="">
                         <svg class="svg-inline--fa fa-user position-absolute top-50 start-50 translate-middle" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg="">
                             <path fill="currentColor" d="M224 256c70.7 0 128-57.31 128-128s-57.3-128-128-128C153.3 0 96 57.31 96 128S153.3 256 224 256zM274.7 304H173.3C77.61 304 0 381.6 0 477.3c0 19.14 15.52 34.67 34.66 34.67h378.7C432.5 512 448 496.5 448 477.3C448 381.6 370.4 304 274.7 304z"></path>
@@ -394,8 +394,8 @@
                 
             <!-- Education -->
             <section style="white-space: normal;" class="section projects-section">
-                <h2 class="c55 section-title mb-3" style="color: rgb(58, 91, 135);">
-                    <span class="setcolor icon-holder" style="">
+                <h2 class="c55 section-title mb-3">
+                    <span class="setcolor icon-holder">
                         <svg class="svg-inline--fa fa-box-archive position-absolute top-50 start-50 translate-middle" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="box-archive" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
                             <path fill="currentColor" d="M32 432C32 458.5 53.49 480 80 480h352c26.51 0 48-21.49 48-48V160H32V432zM160 236C160 229.4 165.4 224 172 224h168C346.6 224 352 229.4 352 236v8C352 250.6 346.6 256 340 256h-168C165.4 256 160 250.6 160 244V236zM480 32H32C14.31 32 0 46.31 0 64v48C0 120.8 7.188 128 16 128h480C504.8 128 512 120.8 512 112V64C512 46.31 497.7 32 480 32z"></path>
                         </svg>
@@ -422,7 +422,7 @@
 
             <!-- experiences -->
             <section class="section experiences-section">
-                <h2 class="c55 section-title mb-3" style="color: rgb(58, 91, 135);">
+                <h2 class="c55 section-title mb-3">
                     <span class="setcolor icon-holder" style="">
                         <svg class="svg-inline--fa fa-briefcase position-absolute top-50 start-50 translate-middle" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="briefcase" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
                             <path fill="currentColor" d="M320 336c0 8.844-7.156 16-16 16h-96C199.2 352 192 344.8 192 336V288H0v144C0 457.6 22.41 480 48 480h416c25.59 0 48-22.41 48-48V288h-192V336zM464 96H384V48C384 22.41 361.6 0 336 0h-160C150.4 0 128 22.41 128 48V96H48C22.41 96 0 118.4 0 144V256h512V144C512 118.4 489.6 96 464 96zM336 96h-160V48h160V96z"></path>
@@ -437,7 +437,7 @@
                             <div class="text-uppercase"><h2 class="job-title">{{ $exp->name_post }}</h2></div>
                             <div class="upper-row d-flex justify-content-between">
                                 <div class="col-xs-7 compa">{{ $exp->name_company.", ".$exp->city }}</div>
-                                <div class="col-xs-5 date">{{ $exp->start_date." - ".$exp->end_date }}</div>
+                                <div class="col-xs-5 date">{{ $exp->start_date." - ".($exp->currently_here ? "I’m currently working in this role" : $exp->end_date) }}</div>
                             </div>
                         </div>
                         <div class="text-wrap"><p>{{ $exp->description }}</p></div>
@@ -448,7 +448,7 @@
             
             <!-- skills -->
             <section class="skills-section section">
-                <h2 class="c55 section-title mb-3" style="color: rgb(58, 91, 135);">
+                <h2 class="c55 section-title mb-3">
                     <span class="setcolor icon-holder" style="">
                         <svg class="svg-inline--fa fa-rocket position-absolute top-50 start-50 translate-middle" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rocket" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
                             <path fill="currentColor" d="M156.6 384.9L125.7 353.1C117.2 345.5 114.2 333.1 117.1 321.8C120.1 312.9 124.1 301.3 129.8 288H24C15.38 288 7.414 283.4 3.146 275.9C-1.123 268.4-1.042 259.2 3.357 251.8L55.83 163.3C68.79 141.4 92.33 127.1 117.8 127.1H200C202.4 124 204.8 120.3 207.2 116.7C289.1-4.07 411.1-8.142 483.9 5.275C495.6 7.414 504.6 16.43 506.7 28.06C520.1 100.9 516.1 222.9 395.3 304.8C391.8 307.2 387.1 309.6 384 311.1V394.2C384 419.7 370.6 443.2 348.7 456.2L260.2 508.6C252.8 513 243.6 513.1 236.1 508.9C228.6 504.6 224 496.6 224 488V380.8C209.9 385.6 197.6 389.7 188.3 392.7C177.1 396.3 164.9 393.2 156.6 384.9V384.9zM384 167.1C406.1 167.1 424 150.1 424 127.1C424 105.9 406.1 87.1 384 87.1C361.9 87.1 344 105.9 344 127.1C344 150.1 361.9 167.1 384 167.1z"></path>

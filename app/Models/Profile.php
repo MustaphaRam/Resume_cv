@@ -17,9 +17,10 @@ class Profile extends Model
 
     public function __construct()
     {
-        $this->attributes['image_profile'] = "";
+        $this->attributes['image_profile'] = null;
         $this->attributes['my_profile'] = "";
         $this->attributes['hobbies'] = "";
+        $this->attributes['title_pro'] = "";
     }
     public function setImage_profile($value)
     {

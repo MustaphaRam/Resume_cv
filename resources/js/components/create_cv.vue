@@ -1,5 +1,6 @@
 <template>
-    <div class="container rounded bg-white mt-4 mb-4">
+    <div class="container rounded bg-white my-4 border border-2">
+        <div v-if="showToast" v-html="toastContant"></div>
     <div class="row">
         <div class="col-md-6 section-left">
             <div class="col-md-12 mb-3 mt-2">
@@ -17,8 +18,7 @@
                 </div>
             </div>
             <form @submit.prevent="submit" enctype="multipart/form-data" @input="dataToIframe">
-                <input id="title" type="hidden">
-                <div class="col-md-12 border-right content-left">
+                <div class="col-md-12 border-right content-left" style="min-height: 300px;">
                     <div class="alert alert-success" v-show="success">Your CV it is Save</div>
                     <div class="p-3 py-2">
                         <!-- *************** form 0 ****************************-->
@@ -46,10 +46,10 @@
                                         <span for="image" class="border px-3 p-1 add-button">
                                             Chosse Image
                                             <!-- <input type="file" id="image" @change="handleImageChange" accept="image/*"> -->
-                                            <input @change="handleFileChange" type="file" class="form-control form-control-sm" accept=".png, .jpg, .jpeg" >
+                                            <input @change="handleFileChange" type="file"  class="form-control form-control-sm" accept=".png, .jpg, .jpeg" >
                                         </span>
-                                        <div v-if="fields.image_profile">
-                                            <img  class="img-thumbnail" width="125" :src="imageUrl" alt="Image Principale" >
+                                        <div v-if="fields.image_profile || cv.profile != null && cv.profile.image_profile != null">
+                                            <img  class="img-thumbnail" width="125" :src="imageUrl || '/upload/images/'+cv.profile.image_profile" alt="Image Principale" >
                                         </div>
                                         <span style="color: red;" v-if="errors && errors['fields.image_profile']">{{ errors['fields.image_profile'][0] }}</span>
                                     </div>
@@ -209,7 +209,7 @@
                                                 </div>
                                                 <div class="col-md-12 py-1">
                                                     <label class="labels">Description</label>
-                                                    <textarea v-model="certificate.description"  maxlength="130" class ="form-control other_info"></textarea>
+                                                    <textarea v-model="certificate.description"  maxlength="400" class ="form-control other_info"></textarea>
                                                     <span style="color:red;" v-if="errors && errors['certificate.' + k + '.description']">{{ errors['certificate.' + k + '.description'][0] }}</span>
                                                 </div>
                                             </div>
@@ -282,11 +282,11 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12 py-1">
-                                                    <input v-model="experience.currently_here" @change="changecurrently_here(e)" type="checkbox" name="currently_here[]" value="0">
-                                                    <label class="labels" for="currently_here[]">&emsp;I currently work here</label>
+                                                    <input v-model="experience.currently_here" :checked="experience.currently_here" @change="changecurrently_here(e)" type="checkbox" name="currently_here[]" value="0">
+                                                    <label class="labels" for="currently_here[]">&emsp;I’m currently working in this role</label>
                                                 </div>
                                                 <div class="col-md-12 py-1">
-                                                    <label class="labels">Description</label>
+                                                    <label class="labels">Work description</label>
                                                     <textarea v-model="experience.description" name="description[]" maxlength="400" class = "form-control"></textarea>
                                                     <span style="color:red;" v-if="errors && errors['experiences.' + e + '.description']">{{ errors['certificates.' + e + '.description'][0] }}</span>
                                                 </div>
@@ -423,6 +423,9 @@
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <h4 class="text-right"><b>Finish</b></h4>
                             </div>
+                            <div v-if="sub_succes" class="alert alert-success" role="alert">
+                                CV has been successfully submitted!
+                            </div>
                             <span style="color: red" v-for="(error, er) in errors" :key="er"> {{ error[0] }}</span>
                         </div>
                     </div>
@@ -432,10 +435,11 @@
                         <div class="btn-back btn float-start" id="back_btn" @click="back(14)">❮ Go Back</div>
                     </div>
                     <div v-if="pos == 92" style="text-align-last: center;">
-                        <button type="submit" id="save-btn" class="btn-next btn btn-primary">Save 
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-all" viewBox="0 0 16 16">
-                                <path d="M8.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L2.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093L8.95 4.992a.252.252 0 0 1 .02-.022zm-.92 5.14.92.92a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 1 0-1.091-1.028L9.477 9.417l-.485-.486-.943 1.179z"/>
-                            </svg>
+                        <button :disabled="sub" type="submit" id="save-btn" class="btn-next btn btn-primary">
+                            <div v-if="sub" style="width:16; height:16" class="spinner-border text-light" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            Save 
                         </button>
                     </div>
                     <div v-if="pos < 92" class="div-next-btn">
@@ -461,7 +465,7 @@
                         </div>
                         <div class="p-1 bd-highlight" style="display: inline-flex;" >
                             <!-- <label for="ColorInput" class="form-label">Color picker </label> -->
-                            <input @input="design_template" v-model="template.color" type="color" class="form-control form-control-color"  id="color"  title="Choose your color">                           
+                            <input v-model="template.color" @input="design_template" type="color" class="form-control form-control-color"  id="color"  title="Choose your color">                           
                         </div>
                         <div class="p-2 bd-highlight col-md-3">
                             <select @change="design_template" v-model="template.font_fami" class="form-select form-select-sm" aria-label="form-select-sm example" id="font_fami">
@@ -496,13 +500,12 @@
 
 <script>
     import axios from 'axios';
+    //const ti = cv.title;
     
     export default {
-        components: {
-            //Vue3SlideUpDown,
-        },
         data () {
             return {
+                cv: cv,
                 template: {
                     temp: 't1',
                     color: '#3a5b87',
@@ -514,6 +517,7 @@
                 progress: 8,
                 message: null,
                 fields: {
+                    id: cv.id,
                     image_profile: "",
                     gender: 'male',
                     country: null,
@@ -554,32 +558,33 @@
                     show: true,
                 }],
                 level: ["Beginner","Moderate","Good","Very good","Fluent"],
-                errors: true,     
+                errors: true,
+                showToast: false,
+                toastContant: '',
+                sub: false,
+                sub_succes: false,
             }
         },
         methods: {  
-            add_certificate() {
+            add_certificate(obj = {}) {
                 this.disable_all_cert();
                 this.certificates.push({
-                    name: '',
-                    institute_name: '',
-                    Specialty_name: '',
-                    date_obtaining: '',
-                    description: '',
+                    name: obj.certificate ? obj.certificate : '',
+                    institute_name: obj.institute_name ? obj.institute_name : '',
+                    Specialty_name: obj.Specialty_name ? obj.Specialty_name : '',
+                    date_obtaining: obj.date_obtaining ? obj.date_obtaining : '',
+                    description: obj.description ? obj.description : '',
                     show: true,
                 })
-                console.table(this.certificates);
             },
             remove_certificate (index) {
                 this.certificates.splice(index, 1);
                 if(this.certificates.length == 1)
                     this.certificates[0].show = true;
-                console.table(this.certificates);
             },
             toggle(index) {
                 this.disable_all_cert(index);
                 this.certificates[index].show = !this.certificates[index].show;
-                console.table(this.certificates);
             },
             disable_all_cert(index = {}){
                 for (let i = 0; i < this.certificates.length; i++) {
@@ -593,19 +598,18 @@
                 }
             },
             /********* experiences ************ */
-            add_experience() {
+            add_experience(obj = {}) {
                 this.disable_all_exp();
                 this.experiences.push({
-                    name_post: '',
-                    name_company: '',
-                    start_date: '',
-                    end_date: '',
-                    city: '',
-                    description: '',
-                    currently_here: false,
+                    name_post: obj.name_post ? obj.name_post : '',
+                    name_company: obj.name_company ? obj.name_company : '',
+                    start_date: obj.start_date ? obj.start_date : '',
+                    end_date: obj.end_date ? obj.end_date : '',
+                    city: obj.city ? obj.city : '',
+                    description: obj.description ? obj.description : '',
+                    currently_here: obj.currently_here ? true : false,
                     show: true,
                 });
-                console.table(this.experiences);
             },
             remove_experience (index) {
                 this.experiences.splice(index, 1);
@@ -615,7 +619,6 @@
             toggle_exp (index) {
                 this.disable_all_exp(index);
                 this.experiences[index].show = !this.experiences[index].show;
-                console.table(this.experiences);
             },
             disable_all_exp(index = {}){
                 for (let i = 0; i < this.experiences.length; i++) {
@@ -630,18 +633,16 @@
             },
             changecurrently_here(index){
                 this.experiences[index].end_date = '';
-                console.log('currently_here value:', Boolean(this.experiences[index].currently_here));
             },
             /********* skills ************ */
-            add_skill() {
+            add_skill(obj = {}) {
                 this.disable_all_skills();
                 this.skills.push({
-                    name: '',
-                    level: '',
-                    levelIndex: 0,
+                    name: obj.name ? obj.name : '',
+                    level: obj.level ? obj.level : '',
+                    levelIndex: this.level.indexOf(obj.level) ? this.level.indexOf(obj.level) : '',
                     show: true,
                 });
-                console.table(this.experiences);
             },
             remove_skill (index) {
                 this.skills.splice(index, 1);
@@ -652,7 +653,6 @@
             toggle_skill (index) {
                 this.disable_all_skills(index);
                 this.skills[index].show = !this.skills[index].show;
-                console.table(this.skills);
             },
             disable_all_skills(index = {}){
                 for (let i = 0; i < this.skills.length; i++) {
@@ -671,12 +671,12 @@
             },
 
             /********* languges ************ */
-            add_language() {
+            add_language (obj = {}) {
                 this.disable_all_languages();
                 this.languages.push({
-                    name: '',
-                    level: 'Beginner',
-                    levelIndex: 0,
+                    name: '' || obj.language_name,
+                    level: '' || obj.level,
+                    levelIndex: 0 || this.level.indexOf(obj.level),
                     show: true,
                 });
             },
@@ -685,7 +685,6 @@
                 if(this.languages.length == 1)
                     this.languages[0].show = true;
             },
-
             toggle_lang (index) {
                 this.disable_all_languages(index);
                 this.languages[index].show = !this.languages[index].show;
@@ -702,7 +701,7 @@
                 }
             },
             updateLanguageLevel(index) {
-                // Update skill.level based on the level index
+                // Update language.level based on the level index
                 this.languages[index].level = this.level[this.languages[index].levelIndex];
             },
                         
@@ -711,8 +710,10 @@
                 this.fields.image_profile = event.target.files[0] || null;
             },
             submit() {
+                this.sub = true;
                 this.errors = false;
-                
+                this.sub_succes = false;
+
                 // Create FormData
                 const formData = new FormData();
                 
@@ -753,26 +754,46 @@
                     formData.append(`template[${key}]`, this.template[key]);
                 }
 
-                console.log(this.fields);
-                axios.post('store', formData, {
+                axios.post('/cv/store', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
                 })
                 .then(response => {
                     // Handle success
+                    //console.log(response.data);
+                    const successMessage = response.data.success; // Assuming the success message is returned from the server
                     console.log(response.data);
+                    if (successMessage) {
+                        this.sub = false;                     
+                        this.toastContant = `<div class="toast-container p-3 top-1 start-50 translate-middle-x" >
+                            <div class="toast align-items-center text-bg-success border-0 fade show" role="alert" aria-live="assertive" aria-atomic="true">
+                                <div class="d-flex">
+                                    <div class="toast-body">
+                                        CV has been successfully submitted!
+                                    </div>
+                                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                </div>
+                            </div>
+                        </div>`;
+                        this.showToast = true;
+                        this.sub_succes = true;
+                        //parent.append(el);
+
+                        // Redirect to home after a successful submission
+                        //this.$router.push('/home');  // Replace 'home' with the name of your home route
+                    }
                 })
                 .catch(error => {
                     if (error.response.status === 422) {
                         // Validation error
                         this.errors = error.response.data.errors;
                         console.table(this.errors);
-                        //console.log(this.errors.Object.fields.date_birth[0]);
                     } else {
                         // Other error (server error, etc.)
                         console.error(error);
                     }
+                    this.sub = false;
                 });
             },
             next(p) {
@@ -797,23 +818,27 @@
                     if(this.fields.image_profile){
                         var imagPro = iframe.getElementById("imagPro");  
                         imagPro.src = this.imageUrl;
-                        console.log(this.imageUrl);
+                    }
+                    else if (cv.profile.image_profile){
+                        var imagPro = iframe.getElementById("imagPro");  
+                        imagPro.src = '/Upload/images/'+cv.profile.image_profile;
                     }
                     if(this.fields.image_profile){iframe.getElementById("cader-imag").hidden=false;}
                     //img_svg.prop('hidden', false);
                     iframe.getElementById("tit").textContent = this.fields.title;
-                    iframe.getElementById("fullName").textContent = this.fields.name + this.fields.lastName;
+                    iframe.getElementById("fullName").textContent = this.fields.name +" "+ this.fields.lastName;
                     iframe.getElementById("email").textContent = this.fields.email;
-                    var ph2="";if(this.fields.phone2) ph2=' / '+this.fields.phone2;
+                    var ph2="";if(this.fields.phone2) ph2=' / '+ this.fields.phone2;
                     iframe.getElementById("tel").textContent = this.fields.phone1+ ph2;
                     iframe.getElementById("address").textContent = this.fields.address;
                     iframe.getElementById("linkedin").textContent = this.fields.linkedin;
                     iframe.getElementById("Profile").textContent = this.fields.my_profile;
                     
-                    var secEdu = iframe.getElementById('secEdu'),count=0;
+                    //var secEdu = iframe.getElementById('secEdu');
+                    var count=0;
                     $.each(this.certificates, function(key, value){
                         if(count==0)$('#cv_templet').contents().find('#secEdu').html("");;
-                        var sedu = `<div class="item"><div class="meta"><div class="upper-row"><h2 class="job-title">`+this.name+` `+this.Specialty_name+`</h2></div><div class="upper-row"><div class="compa">`+this.institute_name+`</div><div class="date">`+this.date_obtaining+`</div></div></div><div class="text-wrap"><p>`+this.description+`</p></div></div>`;
+                        var sedu = `<div class="item"><div class="meta"><div class="upper-row"><h2 class="job-title">`+this.name+` `+this.Specialty_name+`</h2></div><div class="upper-row d-flex justify-content-between"><div class="col-xs-7 compa">`+this.institute_name+`</div><div class="col-xs-5 date">`+this.date_obtaining+`</div></div></div><div class="text-wrap"><p>`+this.description+`</p></div></div>`;
                         $('#cv_templet').contents().find('#secEdu').append(sedu);
                         count++;
                     });
@@ -822,7 +847,7 @@
                     //experience
                     $.each(this.experiences, function(key, value){
                         if(count==0)$('#cv_templet').contents().find('#secExp').html("");
-                        var sedu = `<div class="item"><div class="meta"><div class="upper-row"><h2 class="job-title">`+this.name_post+`</h2></div><div class="upper-row"><div class="compa">`+this.name_company+`, `+this.city+`</div><div class="date">`+this.start_date+` - `+this.end_date+`</div></div></div><div class="text-wrap"><p>`+this.description+`</p></div></div>`;
+                        var sedu = `<div class="item"><div class="meta"><div class="upper-row"><h3 class="job-title">`+this.name_post+`</h3></div><div class="upper-row"><div class="compa">`+this.name_company+`, `+this.city+`</div><div class="date">`+this.start_date+` - `+this.end_date+`</div></div></div><div class="text-wrap"><p>`+this.description+`</p></div></div>`;
                         $('#cv_templet').contents().find('#secExp').append(sedu);
                         count++;
                     });
@@ -832,16 +857,15 @@
                     var cercles ="";
                     //lang
                     $.each(this.languages, function(key, value){
-                        if(count==0)$('#cv_templet').contents().find('#seclang').html("");
+                    if(count==0)$('#cv_templet').contents().find('#seclang').html("");
                         if(this.name){
                             for (let index = 0; index < leval.length; index++) {
                                 if(index<=leval.indexOf(this.level))
-                                    //cercles +='<span class="c55 icon-holder" style="padding: 0 3px;"><icon class="fa-solid fa-circle"></icone></span>';
-                                    cercles +='<div class="setcolor" style="padding: 0 3px; height: 15px; width: 15px; border-radius: 50%;"></div>';
+                                    cercles +='<div class="setcolor" style="margin: 0 3px; height: 7px; width: 7px; border-radius: 50%;"></div>';
                                 else
-                                    cercles +='<div class="" style="padding: 0 3px; background-color: #bbbbbb; height: 15px; width: 15px; border-radius: 50%;"></div>';
+                                    cercles +='<div class="" style="margin: 0 3px; background-color: #bbbbbb;  height: 7px; width: 7px; border-radius: 50%;"></div>';
                             }
-                            var sedu = `<div class="lan_lev"><div class="col-xs-6"><span class="lang">`+this.name+`</span></div> <div class="col-xs-4" style="display: -webkit-inline-box;">`+cercles+`</div></div>`;
+                            var sedu = `<div class="lan_lev row justify-content-between align-items-center"><div class="col-6"><span class="lang">`+this.name+`</span></div> <div class="col-6 d-flex justify-content-around">`+cercles+`</div></div>`;
                             $('#cv_templet').contents().find('#seclang').append(sedu);
                             count++;
                             cercles="";
@@ -857,8 +881,8 @@
                             var sedu = `<div class="container">
                             <div class="row justify-content-around">
                                 <div class="col-6"><h6 class="level-title">`+this.name+`</h6></div>
-                                <div class="col-4">
-                                    <div class="progress" style="height: 15px; width: 190px; margin-top: 3px;">
+                                <div class="col-5">
+                                    <div class="progress" style="height: 10px; width: 100%; margin-top: 3px;">
                                         <div class="progress-bar setcolor" role="progressbar" style="width: `+cercles+`%;" aria-valuenow="`+cercles+`" aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                 </div>
@@ -879,7 +903,9 @@
                             $('#cv_templet').contents().find('#hobbies').append('<li>'+this+'</li>');
                         });
                     }
-                    design_template;
+                    this.$nextTick(() => {
+                        this.design_template();
+                    });
                 }
                 catch(err)
                 {
@@ -901,6 +927,67 @@
                 $.each(iframe.getElementsByClassName("c55"), function(key, value){
                     this.style.color = $("#color").val();
                 });
+            },
+            setImage(image) {
+                return URL.createObjectURL('/upload/images/'+image);
+            }
+        },
+        mounted() {
+            try {
+                if (cv.profile) {
+                    this.fields.name = cv.profile.name;
+                    this.fields.lastName = cv.profile.lastname;
+                    this.fields.date_birth = cv.profile.date_birth;
+                    this.fields.gender = cv.profile.gender;
+                    this.fields.country = cv.profile.country;
+                    this.fields.hobbies = cv.profile.hobbies;
+                    this.fields.title = cv.title;
+                    this.fields.my_profile = cv.profile.my_profile;
+                    //this.files.image_profile = cv.profile.image_profile ? '/Upload/images/' + cv.profile.image_profile : null;
+
+                    this.fields.address = cv.contact.address;
+                    this.fields.city = cv.contact.city;
+                    this.fields.profile = cv.contact.city;
+                    this.fields.phone1 = cv.contact.phone1;
+                    this.fields.phone2 = cv.contact.phone2;
+                    this.fields.email = cv.contact.email;
+                    this.fields.linkedin = cv.contact.linkedin ? cv.contact.linkedin : "";
+
+                    this.certificates = [];
+                    cv.certificate.forEach(obj => {
+                        this.add_certificate(obj);
+                    });
+
+                    this.experiences = [];
+                    cv.experience.forEach(obj => {
+                        this.add_experience(obj);
+                    });
+
+                    this.skills = [];
+                    cv.skill.forEach(obj => {
+                        this.add_skill(obj);
+                    });
+
+                    this.languages = [];
+                    cv.language.forEach(obj => {
+                        this.add_language(obj);
+                    });
+                    
+                    this.template.temp = cv.templet.name;
+                    this.template.color = cv.template.color;
+                    this.template.font_fami = cv.template.font_fami;
+                    this.template.size_font = cv.template.size_font;
+
+                    this.$nextTick(() => {
+                        this.dataToIframe();
+                    });
+                }
+            } catch(e) {
+                console.error(e);
+            }
+            const iframeWindow = document.getElementById("cv_templet").contentWindow;
+            if (iframeWindow) {
+                iframeWindow.addEventListener("load", this.dataToIframe);
             }
         },
         computed: {

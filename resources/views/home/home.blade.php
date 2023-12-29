@@ -14,12 +14,19 @@
         </div>
     @endif
         <div class="col-md-8 mt-5">
+            <div>
+                <div>
+                    <div>
+
+                    </div>
+                </div>
+            </div>
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h2 class="d-inline">Your have {{ count($cvs) }} cv</h2>
+                        <h4 class="d-inline">Your have {{ count($cvs) }} cv</h4>
                         <div class="d-inline gap-2 d-md-flex justify-content-md-end">
-                            <a href="{{ route('create')}}" class="btn btn-primary btn-sm me-md-2" tabindex="-1" role="button" aria-disabled="true">Create new</a>
+                            <a href="{{ route('cv.create')}}" class="btn btn-primary btn-sm me-md-2" tabindex="-1" role="button" aria-disabled="true">Create new</a>
                         </div>
                     </div>
                 </div>
@@ -36,7 +43,10 @@
                             </div>
                             <div class="p-3">
                                 <span class="float-start">{{ date("d-m-Y", strtotime($item->created_at)) }}</span>
-                                <span class="float-end"><a href="cv/download/{{$item->id}}" target="_blank">Download<a/></span>
+                                <span class="float-end">
+                                    <a href="cv/update/{{$item->id}}">Edit<a/>&nbsp;
+                                    <a href="cv/download/{{$item->id}}" target="_blank">Download<a/>
+                                </span>
                             </div>
                         </div>
                     @endforeach

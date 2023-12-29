@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::create('profile', function (Blueprint $table) {
             $table->id();
-            $table->string('title_pro', 50);
-            $table->string('name', 50);
-            $table->string('lastname', 50);
-            $table->date('date_birth',10);
-            $table->string('gender',6);
+            $table->string('title_pro', 50)->nullable();
+            $table->string('name', 50)->nullable();
+            $table->string('lastname', 50)->nullable();
+            $table->date('date_birth',10)->nullable();
+            $table->string('gender',6)->nullable();
             $table->string('image_profile',150)->nullable();
             $table->string('country',50)->nullable();
             $table->text('my_profile', 400)->nullable();
